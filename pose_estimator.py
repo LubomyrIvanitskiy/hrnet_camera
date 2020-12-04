@@ -1,13 +1,25 @@
 import sys
+
 import os
+
 import asyncio
 import base64
 from PIL import Image
 import importlib
 import cv2
-from hrnet.SimpleHRNet import SimpleHRNet
+print(os.getcwd())
+if not os.getcwd().endswith("hrnet"):
+    os.chdir(os.getcwd()+"/hrnet")
+    if os.getcwd() not in sys.path:
+      sys.path.append(os.getcwd())
+    print(os.getcwd())
+    print(sys.path)
+from SimpleHRNet import SimpleHRNet
+if os.getcwd().endswith("hrnet"):
+    os.chdir("".join(os.getcwd()[:-len("/hrnet")]))
+print(os.getcwd())
 
-model = SimpleHRNet(32, 17, "../weights/pose_hrnet_w32_256x192.pth", multiperson=False)
+model = SimpleHRNet(32, 17, "weights/pose_hrnet_w32_256x192.pth", multiperson=False)
 
 def predict_image_points(img):
         pts = model.predict(img)

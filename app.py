@@ -1,9 +1,8 @@
-from sys import stdout
+from flask_ngrok import run_with_ngrok
+
 import os
-import sys
-if not os.getcwd().endswith("hrnet"):
-    os.chdir(os.getcwd()+"/hrnet")
-sys.path.append(os.getcwd())
+print(os.getcwd())
+from sys import stdout
 from image_processor import ImageProcessor
 import logging
 from flask import Flask, render_template, Response
@@ -12,6 +11,7 @@ from camera import Camera
 
 
 app = Flask(__name__)
+# run_with_ngrok(app)   #starts ngrok when the app is run
 app.logger.addHandler(logging.StreamHandler(stdout))
 app.config['SECRET_KEY'] = 'secret!'
 app.config['DEBUG'] = True
