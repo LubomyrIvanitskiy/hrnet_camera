@@ -1,56 +1,40 @@
-from sys import stdout
-import os
+from starlette.applications import Starlette
+from starlette.responses import HTMLResponse
+from starlette.routing import Route, Mount
+import uvicorn
 import sys
-if not os.getcwd().endswith("hrnet"):
-    os.chdir(os.getcwd()+"/hrnet")
-sys.path.append(os.getcwd())
-from image_processor import ImageProcessor
-import logging
-from flask import Flask, render_template, Response
-from flask_socketio import SocketIO
-from camera import Camera
+import os
+import io
+import aiohttp
+import asyncio
+import base64
+from PIL import Image
+import importlib
+import torch
+import cv2
+from starlette.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
+
+templates = Jinja2Templates(directory='templates')
+
+app = Starlette()
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 
-app = Flask(__name__)
-app.logger.addHandler(logging.StreamHandler(stdout))
-app.config['SECRET_KEY'] = 'secret!'
-app.config['DEBUG'] = True
-socketio = SocketIO(app)
-camera = Camera(ImageProcessor())
+@app.route("/", methods=["GET"])
+async def homepage(request):
+    return templates.TemplateResponse('index.html', {'request': request})
 
 
-@socketio.on('input image', namespace='/test')
-def test_message(input):
-    input = input.split(",")[1]
-    camera.enqueue_input(input)
-
-
-@socketio.on('connect', namespace='/test')
-def test_connect():
-    app.logger.info("client connected")
-
-
-@app.route('/')
-def index():
-    """Video streaming home page."""
-    return render_template('index.html')
-
-
-def gen():
-    """Video streaming generator function."""
-
-    app.logger.info("starting to generate frames!")
+@app.websocket_route('/ws')
+async def websocket_endpoint(websocket):
+    await websocket.accept()
     while True:
-        frame = camera.get_frame() #pil_image_to_base64(camera.get_frame())
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        mesg = await websocket.receive_text()
+        await websocket.send_text(mesg)
+    await websocket.close()
 
 
-@app.route('/video_feed')
-def video_feed():
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-if __name__ == '__main__':
-    socketio.run(app)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8008))
+    uvicorn.run(app, host="0.0.0.0", port=port)
