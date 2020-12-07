@@ -5,11 +5,15 @@ import os
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
+from camera import Camera
+from image_processor import ImageProcessor
+
 templates = Jinja2Templates(directory='templates')
 
 app = Starlette()
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
+camera = Camera(ImageProcessor())
 
 @app.route("/", methods=["GET"])
 async def homepage(request):
@@ -21,7 +25,12 @@ async def websocket_endpoint(websocket):
     await websocket.accept()
     while True:
         mesg = await websocket.receive_text()
-        await websocket.send_text(mesg)
+        parts = mesg.split(",")
+        camera.enqueue_input(parts[1])
+        processed = camera.get_frame()
+        parts[1] = processed
+        output = ",".join(parts)
+        await websocket.send_text(output)
     await websocket.close()
 
 
