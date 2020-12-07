@@ -32,7 +32,8 @@ class Camera(object):
         output_str = pil_image_to_base64(output_img)
 
         # convert eh base64 string in ascii to base64 string in _bytes_
-        self.to_output.append(binascii.a2b_base64(output_str))
+        # self.to_output.append(binascii.a2b_base64(output_str))
+        self.to_output.append(output_str.decode("utf-8"))
 
     def keep_processing(self):
         while True:

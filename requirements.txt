@@ -3,4 +3,6 @@ uvicorn
 aiofiles
 Jinja2
 websockets
+numpy
+Pillow
 

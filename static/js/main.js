@@ -40,7 +40,7 @@ $(document).ready(function(){
 		 ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, 300, 150);
 		 let dataURL = canvas.toDataURL('image/jpeg', 1.0);
 		 runWebsockets(dataURL)
-	  }, 50);
+	  }, 150);
 	}).catch(function(error) {
 	  console.log(error);
 	});
