@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var image = document.querySelector('#imageElement');
     if ("WebSocket" in window) {
-            var ws = new WebSocket("ws://localhost:8008/ws");
+            var ws = new WebSocket("ws://104.197.238.221:80/ws");
             ws.onopen = function() {
                 console.log("Sending websocket data");
             };
