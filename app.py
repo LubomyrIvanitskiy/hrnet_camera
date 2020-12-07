@@ -1,17 +1,7 @@
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse
-from starlette.routing import Route, Mount
 import uvicorn
-import sys
 import os
-import io
-import aiohttp
-import asyncio
-import base64
-from PIL import Image
-import importlib
-import torch
-import cv2
+
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 
