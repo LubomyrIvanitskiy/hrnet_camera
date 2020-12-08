@@ -19,8 +19,9 @@ class Camera(object):
             return
 
         # input is an ascii string. 
-        input_str = self.to_process.pop(0)
-
+        message = self.to_process.pop(0)
+        parts = message.split(",")
+        input_str = parts[1]
         # convert it to a pil image
         input_img = base64_to_pil_image(input_str)
 
@@ -33,18 +34,20 @@ class Camera(object):
 
         # convert eh base64 string in ascii to base64 string in _bytes_
         # self.to_output.append(binascii.a2b_base64(output_str))
-        self.to_output.append(output_str.decode("utf-8"))
+        parts[1] = output_str.decode("utf-8")
+        output = ",".join(parts)
+        self.to_output.append(output)
 
     def keep_processing(self):
         while True:
             self.process_one()
-            sleep(0.01)
+            sleep(0.1)
 
-    def enqueue_input(self, input):
+    def enqueue_input(self, message):
         if not self.to_process:
-            self.to_process.append(input)
+            self.to_process.append(message)
 
     def get_frame(self):
         while not self.to_output:
-            sleep(0.05)
+            sleep(0.1)
         return self.to_output.pop(0)
