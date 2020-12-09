@@ -1,4 +1,5 @@
 #!/bin/bash
-sh setup_hrnet.sh
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+# Download and setup HRNet
+HRNET=hrnet
+git clone https://github.com/LubomyrIvanitskiy/HRNet.git $HRNET
+sh $HRNET/setup.sh
